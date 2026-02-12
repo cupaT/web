@@ -1,0 +1,49 @@
+info:
+  name: POST /greeting (create user)
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{baseUrl}}/greeting"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "{{testName}}",
+        "surname": "{{testSurname}}"
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        test("Статус 200 для POST /greeting", function() {
+          expect(res.status).to.equal(200);
+        });
+
+        test("Ответ содержит text и id, сохраняем id", function() {
+          const data = res.body;
+
+          // читаем имя и фамилию из ENV Bruno
+          const testName = bru.getEnvVar("testName");
+          const testSurname = bru.getEnvVar("testSurname");
+
+          expect(data).to.have.property("text");
+          expect(data.text).to.be.a("string");
+          expect(data.text).to.contain(testName);
+          expect(data.text).to.contain(testSurname);
+
+          expect(data).to.have.property("id");
+          expect(data.id).to.be.a("string");
+
+          // runtime‑переменная для следующих запросов (аналог createdUserId в Connekt)
+          bru.setVar("createdUserId", data.id);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
