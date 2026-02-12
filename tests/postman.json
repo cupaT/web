@@ -1,0 +1,337 @@
+{
+  "info": {
+    "name": "test",
+    "description": null,
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "GET /greeting (main)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "{{baseUrl}}/greeting",
+          "protocol": "",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "greeting"
+          ],
+          "query": [],
+          "variable": []
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              "test(\"Статус 200 для GET /greeting без id\", function() {",
+              "  expect(res.status).to.equal(200);",
+              "});",
+              "",
+              "test(\"Ответ содержит поле text\", function() {",
+              "  const data = res.body;",
+              "  expect(data).to.have.property(\"text\");",
+              "  expect(data.text).to.be.a(\"string\");",
+              "  expect(data.text.length).to.be.greaterThan(0);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST /greeting (create user)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "{{baseUrl}}/greeting",
+          "protocol": "",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "greeting"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"{{testName}}\",\n  \"surname\": \"{{testSurname}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              "test(\"Статус 200 для POST /greeting\", function() {",
+              "  expect(res.status).to.equal(200);",
+              "});",
+              "",
+              "test(\"Ответ содержит text и id, сохраняем id\", function() {",
+              "  const data = res.body;",
+              "",
+              "  // читаем имя и фамилию из ENV Bruno",
+              "  const testName = bru.getEnvVar(\"testName\");",
+              "  const testSurname = bru.getEnvVar(\"testSurname\");",
+              "",
+              "  expect(data).to.have.property(\"text\");",
+              "  expect(data.text).to.be.a(\"string\");",
+              "  expect(data.text).to.contain(testName);",
+              "  expect(data.text).to.contain(testSurname);",
+              "",
+              "  expect(data).to.have.property(\"id\");",
+              "  expect(data.id).to.be.a(\"string\");",
+              "",
+              "  // runtime‑переменная для следующих запросов (аналог createdUserId в Connekt)",
+              "  bru.setVar(\"createdUserId\", data.id);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET /greeting?id={createdUserId}",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "{{baseUrl}}/greeting?id={{createdUserId}}",
+          "protocol": "",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "greeting?id={{createdUserId}}"
+          ],
+          "query": [
+            {
+              "key": "id",
+              "value": "{{createdUserId}}"
+            }
+          ],
+          "variable": []
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              "test(\"Статус 200 для GET /greeting?id={createdUserId}\", function() {",
+              "  expect(res.status).to.equal(200);",
+              "});",
+              "",
+              "test(\"Ответ содержит корректные name и surname\", function() {",
+              "  const data = res.body;",
+              "",
+              "  const testName = bru.getEnvVar(\"testName\");",
+              "  const testSurname = bru.getEnvVar(\"testSurname\");",
+              "",
+              "  expect(data).to.have.property(\"name\");",
+              "  expect(data).to.have.property(\"surname\");",
+              "",
+              "  expect(data.name).to.equal(testName);",
+              "  expect(data.surname).to.equal(testSurname);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET /greeting/{createdUserId}",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "{{baseUrl}}/greeting/{{createdUserId}}",
+          "protocol": "",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "greeting",
+            "{{createdUserId}}"
+          ],
+          "query": [],
+          "variable": []
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              "test(\"Статус 200 для GET /greeting/{createdUserId}\", function() {",
+              "  expect(res.status).to.equal(200);",
+              "});",
+              "",
+              "test(\"Ответ содержит корректные name и surname (path)\", function() {",
+              "  const data = res.body;",
+              "",
+              "  const testName = bru.getEnvVar(\"testName\");",
+              "  const testSurname = bru.getEnvVar(\"testSurname\");",
+              "",
+              "  expect(data).to.have.property(\"name\");",
+              "  expect(data).to.have.property(\"surname\");",
+              "",
+              "  expect(data.name).to.equal(testName);",
+              "  expect(data.surname).to.equal(testSurname);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET /greeting?id=nonExistingId (404)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "{{baseUrl}}/greeting?id={{nonExistingId}}",
+          "protocol": "",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "greeting?id={{nonExistingId}}"
+          ],
+          "query": [
+            {
+              "key": "id",
+              "value": "{{nonExistingId}}"
+            }
+          ],
+          "variable": []
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              "test(\"Статус 404 для GET /greeting?id={nonExistingId}\", function() {",
+              "  expect(res.status).to.equal(404);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET /greeting/{nonExistingId} (404)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "{{baseUrl}}/greeting/{{nonExistingId}}",
+          "protocol": "",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "greeting",
+            "{{nonExistingId}}"
+          ],
+          "query": [],
+          "variable": []
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              "test(\"Статус 404 для GET /greeting/{nonExistingId}\", function() {",
+              "  expect(res.status).to.equal(404);",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "testName",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "testSurname",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "createdUserId",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "nonExistingId",
+      "value": "",
+      "type": "default"
+    }
+  ]
+}
